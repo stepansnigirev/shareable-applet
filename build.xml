@@ -18,32 +18,32 @@
   <!-- ant-javacard task from javacard.pro -->
   <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ant-javacard.jar"/>
   <!-- All included applets -->
-  <target name="Server" depends="init">
+  <target name="Secret" depends="init">
     <javacard jckit="${JCKIT}">
-      <cap output="${cap.dir}/testShareableInterface.cap" 
-           sources="src/server"
-           classes="${class.dir}/testShareableInterface"
-           includes="testShareableInterface.java,IShareableInterface.java"
-           export="${exp.dir}/server"
+      <cap output="${cap.dir}/SecretApplet.cap" 
+           sources="src/secret"
+           classes="${class.dir}/SecretApplet"
+           includes="SecretApplet.java,SecretInterface.java"
+           export="${exp.dir}/secret"
       >
-        <applet class="server.testShareableInterface" aid="112233445500"/>
+        <applet class="secret.SecretApplet" aid="112233445500"/>
       </cap>
     </javacard>
   </target>
 
-  <target name="Client" depends="init,Server">
+  <target name="Client" depends="init,Secret">
     <javacard jckit="${JCKIT}">
-      <cap output="${cap.dir}/testShareableInterfaceClient.cap" 
+      <cap output="${cap.dir}/ClientApplet.cap" 
            sources="src/client"
-           classes="${class.dir}/testShareableInterfaceClient"
-           includes="testShareableInterfaceClient.java"
+           classes="${class.dir}/ClientApplet"
+           includes="ClientApplet.java"
       >
-        <applet class="client.testShareableInterfaceClient" aid="112233446600"/>
-        <import exps="${exp.dir}/server" jar="${exp.dir}/server/server.jar"/>
+        <applet class="client.ClientApplet" aid="112233446600"/>
+        <import exps="${exp.dir}/secret" jar="${exp.dir}/secret/secret.jar"/>
       </cap>
     </javacard>
   </target>
-  <target name="all" depends="Server,Client"/>
+  <target name="all" depends="Secret,Client"/>
 
   <target name="init">
     <mkdir dir="${build.dir}"/>
