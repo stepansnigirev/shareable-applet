@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project basedir="." default="all" name="JavaCardPlayground build">
+  <!-- Applet building dependencies -->
+  <property name="JC211" value="sdks/jc211_kit"/>
+  <property name="JC212" value="sdks/jc212_kit"/>
+  <property name="JC221" value="sdks/jc221_kit"/>
+  <property name="JC222" value="sdks/jc222_kit"/>
+  <property name="JC303" value="sdks/jc303_kit"/>
+  <property name="JC304" value="sdks/jc304_kit"/>
+  <property name="JC305" value="sdks/jc305u3_kit"/>
+  <property name="JCKIT" value="${JC304}"/>
+
+  <property name="build.dir"  value="build"/>
+  <property name="cap.dir"    value="${build.dir}/cap"/>
+  <property name="class.dir"  value="${build.dir}/classes"/>
+  <property name="exp.dir"    value="${build.dir}/exp"/>
+
+  <!-- ant-javacard task from javacard.pro -->
+  <taskdef name="javacard" classname="pro.javacard.ant.JavaCard" classpath="ant-javacard.jar"/>
+  <!-- All included applets -->
+  <target name="Server" depends="init">
+    <javacard jckit="${JCKIT}">
+      <cap output="${cap.dir}/testShareableInterface.cap" 
+           sources="src/server"
+           classes="${class.dir}/testShareableInterface"
+           includes="testShareableInterface.java,IShareableInterface.java"
+           export="${exp.dir}/server"
+      >
+        <applet class="server.testShareableInterface" aid="112233445500"/>
+      </cap>
+    </javacard>
+  </target>
+
+  <target name="Client" depends="init,Server">
+    <javacard jckit="${JCKIT}">
+      <cap output="${cap.dir}/testShareableInterfaceClient.cap" 
+           sources="src/client"
+           classes="${class.dir}/testShareableInterfaceClient"
+           includes="testShareableInterfaceClient.java"
+      >
+        <applet class="client.testShareableInterfaceClient" aid="112233446600"/>
+        <import exps="${exp.dir}/server" jar="${exp.dir}/server/server.jar"/>
+      </cap>
+    </javacard>
+  </target>
+  <target name="all" depends="Server,Client"/>
+
+  <target name="init">
+    <mkdir dir="${build.dir}"/>
+    <mkdir dir="${cap.dir}"/>
+    <mkdir dir="${class.dir}"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${build.dir}"/>
+  </target>
+
+  <target name="clean-build" depends="clean,all"/>
+
+</project>
